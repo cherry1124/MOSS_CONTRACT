@@ -77,7 +77,7 @@ contract spectrumSharing{
     function BidOrAskSubmit(int _role,uint _amount,uint _price)public payable {
         require( now <= bidEnd, "Bid already ended.");
         require(_role==1||_role==-1,"operator unqualified");
-        require(msg.value>1000000000000000,"Not enough deposit");
+        require(msg.value>1000000000000000000,"Not enough deposit");
         deposit[msg.sender]=msg.value;
         executeORnot[msg.sender]=true;
         if(_role==1){
@@ -92,7 +92,7 @@ contract spectrumSharing{
     }
     
     //判断是否出价结束；
-    function AuctionEnd() public {
+    function RegistrationEnd() public {
 
         require(now >= bidEnd, "Bid not yet ended.");
         require(!Bidended, "Bid has already been called.");
