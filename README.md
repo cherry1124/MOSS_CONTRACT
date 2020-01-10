@@ -10,3 +10,11 @@ You can test our MOSS smart contract using Remix IDE. Go to [RemixIDE](https://r
 In Remix-IDE select the account of government and click on *Deploy*.
 ##### 2. OPs submit the bid:
 Call the function BidOrAskSubmit() from account of OPs with the following arguments:
+
+<code> _role:xxx, _amount:xxx, _price:xxx </code>
+
+##### 3. OPs judge whether the registration stage is ended:
+Call the function RegistrationEnd( ) from account of OPs
+
+##### 4.The government open the spectrum auction of registered OPs:
+Call the function sortAskByIncrease(),sortBidByDecrease(),DoubleAuction() orderly from account of government
