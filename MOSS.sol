@@ -16,15 +16,15 @@ contract spectrumSharing{
     bool doubleAuctionFinish=false;
     
     struct Seller{
-        address id;//the address of operator;
-        int role;//role=-1,seller；
+        address id;//the address of OP;
+        int role;//role=-1,seller OPS；
         uint amount;//the number of channels
         uint price;//price per channel
     }
     
     struct Buyer{
-    address id;//the address of operator;
-    int role;//role=1,buyer；
+    address id;//the address of OP;
+    int role;//role=1,buyer OPS；
     uint amount;//the number of channels
     uint price;//price per channel
     }
@@ -43,7 +43,7 @@ contract spectrumSharing{
         uint price;
     }
     
-    mapping(address=>StateRecord) public stateRecord;//true,完全交易；false，不完全交易；
+    mapping(address=>StateRecord) public stateRecord;//true,have already matched；false，do not have already matched；
     mapping(address=>bool) executeORnot;
     mapping (address=>uint) public deposit;
     mapping (address=>uint) public debt;
@@ -65,7 +65,7 @@ contract spectrumSharing{
         _owner=msg.sender;
     }
     
-    //回退函数；
+    //；
     function ()external payable{}
     
     modifier ownerOnly {
@@ -73,7 +73,7 @@ contract spectrumSharing{
         _;
     }
     
-    //买方或卖方提交自己的出价；
+    //submit the bid by seller/buyer OPs；
     function BidOrAskSubmit(int _role,uint _amount,uint _price)public payable {
         require( now <= bidEnd, "Bid already ended.");
         require(_role==1||_role==-1,"operator unqualified");
@@ -91,7 +91,7 @@ contract spectrumSharing{
         emit LogRegisterOp(msg.sender,_role,_amount,_price);
     }
     
-    //判断是否出价结束；
+    //judge whether the bid submission stage is ended；
     function RegistrationEnd() public {
 
         require(now >= bidEnd, "Bid not yet ended.");
@@ -101,7 +101,7 @@ contract spectrumSharing{
     }
     
     
-    //快排算法实现ask的递增排序；
+    //；
     function sortAskByIncrease() public ownerOnly  returns(bool) {
         require(now>bidEnd,"Bid not ended");
         if (asks.length == 0) return false;
@@ -141,7 +141,7 @@ contract spectrumSharing{
     
     
     
-    //快排算法实现bid的递减排序；
+    //；
     function sortBidByDecrease() public ownerOnly returns(bool){
         require(now>bidEnd,"Bid not ended");
         if (bids.length == 0) return false;
@@ -179,7 +179,7 @@ contract spectrumSharing{
         return i;
     }
     
-    //双向拍卖匹配；存在有的参与拍卖的OP不能匹配的情况；
+    //spectrum auction stage；
     function DoubleAuction()public ownerOnly{
         require(now>bidEnd,"Bid not ended");
         Auction1(asks,bids);
@@ -258,7 +258,7 @@ contract spectrumSharing{
         return true;
     }
     
-    //spectrum trading of free market
+    //free-trading market stage
     function freeTradeBegin(uint _freeMarketTime)public ownerOnly {
         require(doubleAuctionFinish==true,"Double Auction not Ended");
         freeMarketEnd=now+_freeMarketTime;
@@ -271,7 +271,7 @@ contract spectrumSharing{
         return true;
     }
     
-    //自由定价；
+  
     function orderResponse(bool _releaseOrresponse,address _op,int _role, uint _price, uint _amount)public returns(bool){//role=1,buyer;role=-1,seller;
         require(now<=freeMarketEnd,"Free Market Already Ended");
         require(_role==stateRecord[msg.sender].role,"Invalid op");
@@ -322,7 +322,8 @@ contract spectrumSharing{
         emit LogNotice("MarketDeal has just ended");
     }
     
-    function payORnot(address _op,bool violateOrnot)public ownerOnly{//政府判断运营商是否在之后交换频谱资源使用权；
+    //judge whether OPs have exchanged the spectrum usage right correctly;
+    function payORnot(address _op,bool violateOrnot)public ownerOnly{
         require(now >= freeMarketEnd);
         executeORnot[_op]=violateOrnot;//false;
     }
@@ -331,7 +332,7 @@ contract spectrumSharing{
         deposit[msg.sender]+=msg.value;
     }
     
-    //withdraw money；
+    //withdraw the remained money；
     function withdraw()public returns(bool) {
         //require(now>bidEnd,"Bid not ended");
         require(now>freeMarketEnd);
@@ -356,13 +357,13 @@ contract spectrumSharing{
         }
     }
     
-    //合约自毁；
+    //
     function selfDestruct() public ownerOnly {
         selfdestruct(_owner);
     }
 
    
-    //改变合约所有者；
+    //
     function changeOwner(address payable _newOwner) public ownerOnly {
         
       if (_owner != _newOwner) {
